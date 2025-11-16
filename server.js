@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose'; // Import mongoose to set config
 import connectDB from './config/db.js';
 
 // Import Routes
@@ -15,12 +16,25 @@ import adminRoutes from './routes/adminRoutes.js';
 // Load env vars
 dotenv.config();
 
+// --- Database Connection ---
+
+// FIX 1: Suppress Mongoose 7 deprecation warning
+// This addresses the 'strictQuery' warning in your logs.
+mongoose.set('strictQuery', false);
+
 // Connect to Database
 connectDB();
 
 const app = express();
 
 // --- Middlewares ---
+
+// FIX 2: Trust the reverse proxy (Render)
+// This is the critical fix for the 'ERR_ERL_UNEXPECTED_X_FORWARDED_FOR' error.
+// It tells Express to trust the 'X-Forwarded-For' header set by Render,
+// allowing express-rate-limit to see the correct client IP.
+// This MUST be set before any middleware that relies on the client IP.
+app.set('trust proxy', 1);
 
 // Enable CORS
 app.use(cors());
@@ -37,6 +51,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
   message: 'Too many requests from this IP, please try again after 15 minutes',
 });
+// Apply the limiter to all API routes
 app.use('/api', limiter);
 
 // --- API Routes ---

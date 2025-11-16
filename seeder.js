@@ -22,12 +22,12 @@ const importData = async () => {
 
     // Create an admin user
     const adminUser = new User({
-      name: 'Admin User',
-      email: 'admin@example.com',
-      password: 'admin123', // Will be hashed by pre-save hook
+      name: 'venky_admin',
+      email: 'VenkyCrustyloaf@example.com',
+      password: 'Crustyloaf@987', // Will be hashed by pre-save hook
       isAdmin: true,
       addresses: [
-         { id: 'a1', street: '789 Admin Blvd', city: 'Adminville', state: 'TX', zip: '11111', default: true },
+         { id: 'a1', street: 'N-K-N Nagar', city: 'Kurnool', state: 'Andhra-pradesh', zip: '518002', default: true },
       ]
     });
     
